@@ -1,4 +1,5 @@
 import {Alert} from 'react-native';
+import {ToastConfig} from 'react-native-styled-toast/dist/Toast';
 import {atom} from 'recoil';
 import {IClient} from '../interfaces/ClientType';
 
@@ -39,8 +40,8 @@ export const searchClient = atom<IClient | undefined>({
 });
 
 export const listClients = async () => {
-  const response = await api.get('/clients');
   try {
+    const response = await api.get('/clients');
     const clients: IClient[] = response.data;
 
     return clients;
@@ -66,6 +67,8 @@ export const deleteClient = (
   navigation: any,
   clientId: string,
   resetClient: () => void,
+  theme: any,
+  toast: (options: ToastConfig) => void,
   setLoading: (value: boolean) => void,
 ) => {
   return new Promise(resolve => {
@@ -90,11 +93,18 @@ export const deleteClient = (
               resolve(true);
               setLoading(false);
               resetClient();
+              toast({
+                ...theme.successToast,
+                message: 'Cliente deletado com sucesso!',
+                duration: 5000,
+              });
               navigation.navigate('Clients');
-            } catch (error) {
-              Alert.alert(
-                'Erro ao deletar cliente, tente novamente mais tarde',
-              );
+            } catch {
+              toast({
+                ...theme.errorToast,
+                message: 'Erro ao deletar cliente, tente novamente mais tarde!',
+                duration: 5000,
+              });
             }
             setLoading(false);
           },

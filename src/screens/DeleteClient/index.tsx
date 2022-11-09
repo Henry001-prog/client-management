@@ -15,7 +15,9 @@ import {
   CityText,
 } from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-// import {Ionicons} from '@expo/vector-icons';
+import {useTheme} from 'styled-components';
+import {useToast} from 'react-native-styled-toast';
+
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {isLoading, deleteClient} from '../../store/clientRecoil';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -53,6 +55,9 @@ export default function DeleteClient() {
   const route = useRoute<RouteProp<StackParamsList, 'DeleteClient'>>();
   const resetClient = useResetRecoilState(searchClient);
 
+  const theme = useTheme();
+  const {toast} = useToast();
+
   const {client} = route.params;
 
   return (
@@ -82,6 +87,8 @@ export default function DeleteClient() {
                 navigation,
                 client.id,
                 resetClient,
+                theme,
+                toast,
                 setLoading,
               )
             }>

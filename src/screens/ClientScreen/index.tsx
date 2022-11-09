@@ -104,17 +104,17 @@ export default function ClientScreen() {
               </ButtonRight>
 
               <ViewClient>
-                <CpfText>{item.cpf}</CpfText>
-                <NameText>{item.name}</NameText>
-                <BirthDateText>{item.birthDate}</BirthDateText>
-                <GenderText>{item.gender}</GenderText>
-                <AddressText>{item.address}</AddressText>
-                <StateText>{item.state}</StateText>
-                <CityText>{item.city}</CityText>
+                <CpfText>{item!.cpf}</CpfText>
+                <NameText>{item!.name}</NameText>
+                <BirthDateText>{item!.birthDate}</BirthDateText>
+                <GenderText>{item!.gender}</GenderText>
+                <AddressText>{item!.address}</AddressText>
+                <StateText>{item!.state}</StateText>
+                <CityText>{item!.city}</CityText>
               </ViewClient>
             </ContainerList>
           )}
-          keyExtractor={(item: IRenderItem, index: number) => index.toString()}
+          keyExtractor={(item: IClient, index: number) => index.toString()}
           numColumns={1}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => <ViewBottom />}

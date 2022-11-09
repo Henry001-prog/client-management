@@ -10,6 +10,6 @@ export interface IClient {
 }
 
 export interface IRenderItem {
-  item: IClient;
+  item?: IClient;
   index: number;
 }

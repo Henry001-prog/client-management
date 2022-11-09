@@ -11,6 +11,8 @@ import {
   Text,
   YupText,
 } from './styles';
+import {useTheme} from 'styled-components';
+import {useToast} from 'react-native-styled-toast';
 
 import {useRecoilState, useResetRecoilState} from 'recoil';
 import {
@@ -98,6 +100,8 @@ export default function ClientFormScreen() {
   const [clientForm, setClientForm] = useRecoilState<IClientForm>(setFormAtom);
   const route = useRoute<RouteProp<StackParamsList, 'ClientForm'>>();
 
+  const theme = useTheme();
+  const {toast} = useToast();
   const {navigate} = useNavigation<ClientScreenNavigationProp>();
   const resetForm = useResetRecoilState(setFormAtom);
   const resetClient = useResetRecoilState(searchClient);
@@ -314,7 +318,7 @@ export default function ClientFormScreen() {
                     onSubmitEditing={handleSubmit(async data => {
                       setLoading(true);
                       try {
-                        await saveClient(data, setLoading);
+                        await saveClient(data, theme, toast, setLoading);
                         resetForm();
                         resetClient();
                         navigate('Clients');
@@ -341,13 +345,13 @@ export default function ClientFormScreen() {
               onPress={handleSubmit(async data => {
                 setLoading(true);
                 try {
-                  await saveClient(data, setLoading);
+                  await saveClient(data, theme, toast, setLoading);
                   resetForm();
                   setClearState(true);
                   resetClient();
                   navigate('Clients');
                 } catch (error: any) {
-                  Alert.alert('Deu erro: ', error);
+                  // Alert.alert('Deu erro: ', error);
                 } finally {
                   setLoading(false);
                 }
