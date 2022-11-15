@@ -1,16 +1,6 @@
-import {ToastConfig} from 'react-native-styled-toast/dist/Toast';
-import {atom} from 'recoil';
-
-export interface IClientForm {
-  id?: string;
-  cpf: string;
-  name: string;
-  birthDate: string;
-  gender: string;
-  address: string;
-  state: string;
-  city: string;
-}
+import { ToastConfig } from 'react-native-styled-toast/dist/Toast';
+import { atom } from 'recoil';
+import { IClientForm } from '../interfaces/ClientFormRecoil';
 
 import api from '../services/api';
 

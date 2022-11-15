@@ -1,6 +1,6 @@
-import React, {Suspense} from 'react';
+import React, { Suspense } from 'react';
 import AppRoutes from './Routes';
-import {RecoilRoot} from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 const ClientsApp = () => (
   <RecoilRoot>

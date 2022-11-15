@@ -1,13 +1,13 @@
-import {FlatList} from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+// @ts-ignore
 import styled from 'styled-components/native';
-import {Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 
 const width = Dimensions.get('window').width;
 
 export const ViewLoading = styled.View`
   flex: 1;
   justify-content: center;
-  width: 100%;
   width: 100%;
 `;
 
@@ -19,6 +19,17 @@ export const ClientContainer = styled.View`
   flex: 1;
   height: 100%;
   width: 100%;
+`;
+
+export const Container = styled.View`
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ViewListContainer = styled.View`
   align-items: center;
   justify-content: center;
 `;
@@ -26,14 +37,28 @@ export const ClientContainer = styled.View`
 export const ViewList = styled.FlatList`
   height: 100%;
   width: 92%;
-  padding-top: 4%;
+  padding-top: 3%;
 ` as unknown as typeof FlatList;
 
 export const ViewBottom = styled.View`
-  margin-bottom: 20px;
+  margin-bottom: 60px;
 `;
 
 export const ContainerList = styled.View.attrs({
+  elevation: 2,
+})`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background-color: white;
+  border: 1px solid #d0d0d0;
+`;
+
+export const SearchContainerList = styled.View.attrs({
   elevation: 2,
 })`
   flex-direction: column;
@@ -130,4 +155,11 @@ export const CityText = styled.Text`
   font-size: 16px;
   padding-bottom: 4%;
   color: #000;
+`;
+
+export const ErrorText = styled.Text`
+  text-align: center;
+  font-size: 17px;
+  padding-bottom: 1%;
+  color: #ff0000;
 `;

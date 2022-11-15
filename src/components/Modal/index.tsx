@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 
 import {
   CenteredView,
@@ -18,26 +18,30 @@ import {
   searchClient,
   searchClients,
 } from '../../store/clientRecoil';
-import {useRecoilState, useResetRecoilState} from 'recoil';
-import {IClient} from '../../interfaces/ClientType';
-// import {Ionicons} from '@expo/vector-icons';
+import { useRecoilState, useResetRecoilState } from 'recoil';
+import { IClient } from '../../interfaces/ClientInterfaces';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTheme } from 'styled-components';
+import { useToast } from 'react-native-styled-toast';
 
 interface IModal {
   isVisible: boolean;
   setModalVisible: (value: boolean) => void;
 }
 
-export const ModalComponent = ({isVisible, setModalVisible}: IModal) => {
+export const ModalComponent = ({ isVisible, setModalVisible }: IModal) => {
   const [clientName, setClientName] = useRecoilState<string>(searchClientName);
   const [, setSearchResult] = useRecoilState<IClient | undefined>(searchClient);
 
   const resetConfirmPassword = useResetRecoilState(searchClientName);
 
+  const theme = useTheme();
+  const { toast } = useToast();
+
   async function getResult() {
     if (clientName) {
       // setLoading(true);
-      const result = await searchClients(clientName);
+      const result = await searchClients(clientName, theme, toast);
       setSearchResult(result);
       // console.warn('Modal: ', result)
       resetConfirmPassword();
@@ -59,7 +63,11 @@ export const ModalComponent = ({isVisible, setModalVisible}: IModal) => {
         <CenteredView>
           <ModalView>
             <BackButtonContainer>
-              <BackButton onPress={() => setModalVisible(!isVisible)}>
+              <BackButton
+                onPress={() => {
+                  setModalVisible(!isVisible);
+                  resetConfirmPassword();
+                }}>
                 <Ionicons name="close" size={35} color="grey" />
               </BackButton>
             </BackButtonContainer>

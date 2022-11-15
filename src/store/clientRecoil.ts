@@ -1,7 +1,8 @@
-import {Alert} from 'react-native';
-import {ToastConfig} from 'react-native-styled-toast/dist/Toast';
-import {atom} from 'recoil';
-import {IClient} from '../interfaces/ClientType';
+import { Alert } from 'react-native';
+import { ToastConfig } from 'react-native-styled-toast/dist/Toast';
+import { atom } from 'recoil';
+import { IClient } from '../interfaces/ClientInterfaces';
+import { MainScreenNavigationProp } from '../interfaces/NavigationInterfaces';
 
 import api from '../services/api';
 
@@ -50,21 +51,29 @@ export const listClients = async () => {
   }
 };
 
-export const searchClients = async (clientName: string) => {
-  const response = await api.get(`/client/${clientName}`);
+export const searchClients = async (
+  clientName: string,
+  theme: any,
+  toast: (options: ToastConfig) => void,
+) => {
   try {
+    const response = await api.get(`/client/${clientName}`);
     const client: IClient | undefined = response.data;
-    // console.warn('Pesquisa: ', client);
 
     return client;
-  } catch (error: any) {
-    Alert.alert('Erro ao buscar o cliente, tente novamente mais tarde');
+  } catch {
+    toast({
+      ...theme.errorToast,
+      message:
+        'Erro ao buscar o cliente, verifique se o cliente está na base de dados!',
+      duration: 5000,
+    });
   }
 };
 
 export const deleteClient = (
   client: IClient,
-  navigation: any,
+  navigation: MainScreenNavigationProp,
   clientId: string,
   resetClient: () => void,
   theme: any,
@@ -110,7 +119,7 @@ export const deleteClient = (
           },
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   });
 };

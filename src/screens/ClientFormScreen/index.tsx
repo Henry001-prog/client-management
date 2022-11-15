@@ -1,5 +1,5 @@
-import React, {useEffect, useRef} from 'react';
-import {Alert, TextInput as RNTextInput, TextInputProps} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Alert, TextInput as RNTextInput, TextInputProps } from 'react-native';
 import {
   KeyboardAvoidingView,
   ScrollView,
@@ -10,32 +10,38 @@ import {
   Button,
   Text,
   YupText,
+  InputFormRow,
+  RowTextInput,
+  Form,
+  Label,
 } from './styles';
-import {useTheme} from 'styled-components';
-import {useToast} from 'react-native-styled-toast';
+import { useTheme } from 'styled-components';
+import { useToast } from 'react-native-styled-toast';
 
-import {useRecoilState, useResetRecoilState} from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import {
   isLoading,
   setFormAtom,
   saveClient,
-  IClientForm,
   clear,
 } from '../../store/clientFormRecoil';
-import {IClient} from '../../interfaces/ClientType';
 import * as Yup from 'yup';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {useForm, Controller} from 'react-hook-form';
-import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {searchClient} from '../../store/clientRecoil';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { searchClient } from '../../store/clientRecoil';
+import {
+  ClientScreenNavigationProp,
+  StackParamsListClientForm,
+} from '../../interfaces/NavigationInterfaces';
+import { IClientForm } from '../../interfaces/ClientFormRecoil';
 
 const schema = Yup.object()
   .shape({
     cpf: Yup.string()
       .required('Informe o CPF')
       .matches(
-        /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/,
+        /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
         'O CPF deve seguir este formato 000.000.000-00',
       ),
     name: Yup.string()
@@ -45,7 +51,7 @@ const schema = Yup.object()
     birthDate: Yup.string()
       .required('Informe a data de nascimento')
       .matches(
-        /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/,
+        /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/,
         'A data deve conter dia, mês e ano, neste formato dd/mm/yyyy',
       ),
     gender: Yup.string()
@@ -70,39 +76,15 @@ const schema = Yup.object()
   })
   .required();
 
-type StackParamsList = {
-  ClientForm: {
-    client: IClient;
-  };
-};
-
-type StackParamsListClients = {
-  Clients: undefined;
-};
-
-export type RootStackParamList = {
-  ClientForm: undefined;
-};
-
-export type FormScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'ClientForm'
->;
-
-export type ClientScreenNavigationProp = StackNavigationProp<
-  StackParamsListClients,
-  'Clients'
->;
-
 export default function ClientFormScreen() {
   const [loading, setLoading] = useRecoilState<boolean>(isLoading);
   const [, setClearState] = useRecoilState<boolean>(clear);
   const [clientForm, setClientForm] = useRecoilState<IClientForm>(setFormAtom);
-  const route = useRoute<RouteProp<StackParamsList, 'ClientForm'>>();
+  const route = useRoute<RouteProp<StackParamsListClientForm, 'ClientForm'>>();
 
   const theme = useTheme();
-  const {toast} = useToast();
-  const {navigate} = useNavigation<ClientScreenNavigationProp>();
+  const { toast } = useToast();
+  const { navigate } = useNavigation<ClientScreenNavigationProp>();
   const resetForm = useResetRecoilState(setFormAtom);
   const resetClient = useResetRecoilState(searchClient);
 
@@ -118,7 +100,7 @@ export default function ClientFormScreen() {
     register,
     handleSubmit,
     reset,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -134,7 +116,7 @@ export default function ClientFormScreen() {
 
   useEffect(() => {
     setClearState(false);
-    const {params} = route;
+    const { params } = route;
     if (params && params.client) {
       const clientToEdit = params.client;
       setClientForm(clientToEdit);
@@ -161,23 +143,27 @@ export default function ClientFormScreen() {
 
   return (
     // eslint-disable-next-line react-native/no-inline-styles
-    <KeyboardAvoidingView style={{flex: 1}} enabled>
+    <KeyboardAvoidingView style={{ flex: 1 }} enabled>
       <ScrollView
         // eslint-disable-next-line react-native/no-inline-styles
-        contentContainerStyle={{padding: 10}}
+        contentContainerStyle={{ padding: 10 }}
         keyboardShouldPersistTaps={'handled'}
         showsVerticalScrollIndicator={false}>
         {clientForm && (
           <>
             <Controller
               control={control}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <FormRow>
+                  <Label>CPF</Label>
                   <TextInput
                     {...register('cpf')}
+                    maxLength={14}
                     placeholder="Digite o CPF"
                     placeholderTextColor={errors.cpf ? '#fff' : '#808080'}
                     returnKeyType="next"
+                    keyboardType="number-pad"
+                    autoCapitalize="none"
                     blurOnSubmit={false}
                     value={value}
                     onBlur={onBlur}
@@ -185,15 +171,18 @@ export default function ClientFormScreen() {
                     error={errors.cpf ? true : false}
                     onSubmitEditing={() => input2Ref.current!.focus()}
                   />
-                  <YupText>{errors.cpf?.message}</YupText>
+                  <YupText error={errors.cpf ? true : false}>
+                    {errors.cpf?.message}
+                  </YupText>
                 </FormRow>
               )}
               name="cpf"
             />
             <Controller
               control={control}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <FormRow>
+                  <Label>Nome</Label>
                   <TextInput
                     {...register('name')}
                     placeholder="Digite o nome"
@@ -207,59 +196,73 @@ export default function ClientFormScreen() {
                     error={errors.name ? true : false}
                     onSubmitEditing={() => input3Ref.current!.focus()}
                   />
-                  <YupText>{errors.name?.message}</YupText>
+                  <YupText error={errors.name ? true : false}>
+                    {errors.name?.message}
+                  </YupText>
                 </FormRow>
               )}
               name="name"
             />
+            <InputFormRow>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Form>
+                    <Label>Data de nascimento</Label>
+                    <RowTextInput
+                      {...register('birthDate')}
+                      placeholder="Data de nascimento"
+                      placeholderTextColor={
+                        errors.birthDate ? '#fff' : '#808080'
+                      }
+                      ref={input3Ref}
+                      returnKeyType="next"
+                      keyboardType="phone-pad"
+                      blurOnSubmit={false}
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      error={errors.birthDate ? true : false}
+                      onSubmitEditing={() => input4Ref.current!.focus()}
+                    />
+                    <YupText error={errors.birthDate ? true : false}>
+                      {errors.birthDate?.message}
+                    </YupText>
+                  </Form>
+                )}
+                name="birthDate"
+              />
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Form marginLeft>
+                    <Label>Gênero</Label>
+                    <RowTextInput
+                      {...register('gender')}
+                      placeholder="Digite o gênero"
+                      placeholderTextColor={errors.gender ? '#fff' : '#808080'}
+                      ref={input4Ref}
+                      returnKeyType="next"
+                      blurOnSubmit={false}
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      error={errors.gender ? true : false}
+                      onSubmitEditing={() => input5Ref.current!.focus()}
+                    />
+                    <YupText error={errors.gender ? true : false}>
+                      {errors.gender?.message}
+                    </YupText>
+                  </Form>
+                )}
+                name="gender"
+              />
+            </InputFormRow>
             <Controller
               control={control}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <FormRow>
-                  <TextInput
-                    {...register('birthDate')}
-                    placeholder="Data de nascimento"
-                    placeholderTextColor={errors.birthDate ? '#fff' : '#808080'}
-                    ref={input3Ref}
-                    returnKeyType="next"
-                    blurOnSubmit={false}
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    error={errors.birthDate ? true : false}
-                    onSubmitEditing={() => input4Ref.current!.focus()}
-                  />
-                  <YupText>{errors.birthDate?.message}</YupText>
-                </FormRow>
-              )}
-              name="birthDate"
-            />
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <FormRow>
-                  <TextInput
-                    {...register('gender')}
-                    placeholder="Digite o gênero"
-                    placeholderTextColor={errors.gender ? '#fff' : '#808080'}
-                    ref={input4Ref}
-                    returnKeyType="next"
-                    blurOnSubmit={false}
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    error={errors.gender ? true : false}
-                    onSubmitEditing={() => input5Ref.current!.focus()}
-                  />
-                  <YupText>{errors.gender?.message}</YupText>
-                </FormRow>
-              )}
-              name="gender"
-            />
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <FormRow>
+                  <Label>Endereço</Label>
                   <TextInput
                     {...register('address')}
                     placeholder="Digite o endereço"
@@ -273,15 +276,18 @@ export default function ClientFormScreen() {
                     error={errors.address ? true : false}
                     onSubmitEditing={() => input6Ref.current!.focus()}
                   />
-                  <YupText>{errors.address?.message}</YupText>
+                  <YupText error={errors.address ? true : false}>
+                    {errors.address?.message}
+                  </YupText>
                 </FormRow>
               )}
               name="address"
             />
             <Controller
               control={control}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <FormRow>
+                  <Label>Estado</Label>
                   <TextInput
                     {...register('state')}
                     placeholder="Digite o Estado"
@@ -295,15 +301,18 @@ export default function ClientFormScreen() {
                     error={errors.state ? true : false}
                     onSubmitEditing={() => input7Ref.current!.focus()}
                   />
-                  <YupText>{errors.state?.message}</YupText>
+                  <YupText error={errors.state ? true : false}>
+                    {errors.state?.message}
+                  </YupText>
                 </FormRow>
               )}
               name="state"
             />
             <Controller
               control={control}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <FormRow>
+                  <Label>Cidade</Label>
                   <TextInput
                     {...register('city')}
                     placeholder="Digite a cidade"
@@ -329,7 +338,11 @@ export default function ClientFormScreen() {
                       }
                     })}
                   />
-                  {<YupText>{errors.city?.message}</YupText>}
+                  {
+                    <YupText error={errors.city ? true : false}>
+                      {errors.city?.message}
+                    </YupText>
+                  }
                 </FormRow>
               )}
               name="city"

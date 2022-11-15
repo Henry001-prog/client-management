@@ -3,63 +3,21 @@
  * @format
  */
 
-import {NavigationContainer} from '@react-navigation/native';
-import React, {Suspense} from 'react';
-import {StatusBar, useColorScheme} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {RecoilRoot} from 'recoil';
+import { NavigationContainer } from '@react-navigation/native';
+import React, { Suspense } from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { RecoilRoot } from 'recoil';
 import AppRoutes from './src/Routes';
-import {ThemeProvider} from 'styled-components';
-import {ToastProvider} from 'react-native-styled-toast';
-
-export const theme = {
-  successToast: {
-    toastStyles: {
-      bg: '#b0eacc',
-      borderRadius: 8,
-      borderBottomWidth: 2,
-      borderBottomColor: '#00aa56',
-    },
-    accentColor: '#00aa56',
-    color: '#000c',
-
-    closeButtonStyles: {
-      bg: '#0000',
-    },
-    closeIconColor: '#00aa56',
-    closeIconSize: 30,
-
-    hideIcon: true,
-    hideAccent: true,
-  },
-
-  errorToast: {
-    toastStyles: {
-      bg: '#ffe3e0',
-      borderRadius: 8,
-      borderWidth: 0,
-      borderBottomWidth: 2,
-      borderBottomColor: '#ff3b36',
-    },
-    accentColor: '#ff3b36',
-    color: '#000c',
-
-    closeButtonStyles: {
-      bg: '#0000',
-    },
-    closeIconColor: '#ff3b36',
-    closeIconSize: 30,
-
-    hideIcon: true,
-    hideAccent: true,
-  },
-};
+import { ThemeProvider } from 'styled-components';
+import { ToastProvider } from 'react-native-styled-toast';
+import { theme } from './src/styles/themes/colors';
 
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
-const App = ({children}: AppProviderProps) => {
+const App = ({ children }: AppProviderProps) => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
