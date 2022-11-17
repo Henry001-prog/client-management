@@ -4,7 +4,7 @@
  */
 
 import { NavigationContainer } from '@react-navigation/native';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { RecoilRoot } from 'recoil';
@@ -12,12 +12,17 @@ import AppRoutes from './src/Routes';
 import { ThemeProvider } from 'styled-components';
 import { ToastProvider } from 'react-native-styled-toast';
 import { theme } from './src/styles/themes/colors';
+import SplashScreen from 'react-native-splash-screen';
 
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
 const App = ({ children }: AppProviderProps) => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

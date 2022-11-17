@@ -37,7 +37,7 @@ export const ViewListContainer = styled.View`
 export const ViewList = styled.FlatList`
   height: 100%;
   width: 92%;
-  padding-top: 3%;
+  padding-top: 3.4%;
 ` as unknown as typeof FlatList;
 
 export const ViewBottom = styled.View`
